@@ -15,19 +15,31 @@ from wtforms.validators import Required
 from flask import Flask, render_template, session, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 import os
+from flask_mail import Mail
 # print(os.path.dirname(__file__))
 # print(os.path.abspath(__file__))
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-# manager = Manager(app)
-bootstrap = Bootstrap(app)
-moment = Moment(app)
+
+
 app.config['SECRET_KEY'] = 'hardtoguess'
 app.config['SQLALCHEMY_DATABASE_URI'] =\
     'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMYCOMMITONTEARDOWN'] = True
+
+app.config['MAIL_SERVER'] = 'smtp.qq.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+#app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USERNAME'] = '401316161@qq.com'
+app.config['MAIL_PASSWORD'] = 'dadjjdasidjasjsg'
+
+mail = Mail(app)
 db = SQLAlchemy(app)
+bootstrap = Bootstrap(app)
+moment = Moment(app)
+#manager = Manager(app)
 
 
 class Role(db.Model):
