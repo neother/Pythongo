@@ -67,13 +67,15 @@ def index():
         if user is None:
             user = User(username=form.name.data)
             db.session.add(user)
+            db.session.commit()
             session['known'] = False
         else:
             session['known'] = True
         session['name'] = form.name.data
         form.name.data = ''
         return redirect(url_for('index'))
-    return render_template('index.html', name=session.get('name'), form=form, current_time=datetime.utcnow(), known=session.get('known', False))
+    return render_template('index.html', name=session.get('name'),
+                           form=form, current_time=datetime.utcnow(), known=session.get('known', False))
 
 
 @app.route('/user/<id>')
@@ -93,4 +95,4 @@ def internal_server_error(e):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=8000, debug=True)

@@ -4,8 +4,8 @@
 {% block title %}Flasky - index{% endblock %}
 {% block page_content %}
 <div class="page-header">
-    <p>The local date and time is {{ moment(current_time).format('h:mm:ss a, MMMM DD YYYY') }}</p>
-    <p>That was {{ moment(current_time).fromNow(refresh=True) }}</p>
+    <p>{{ moment(current_time).format('h:mm:ss a, MMMM DD YYYY') }}</p>
+    <!--<p>That was {{ moment(current_time).fromNow(refresh=True) }}</p>-->
     <!--<p>test {{ moment(current_time).calendar(refresh=True) }}</p>-->
     <h1>Hello {% if name %}{{ name }}{% else %}Stranger{% endif %}!</h1>
     {% if not known %}
