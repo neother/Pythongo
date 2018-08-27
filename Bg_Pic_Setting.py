@@ -5,7 +5,7 @@ bs4.FeatureNotFound: Couldn't find a tree builder with the features you requeste
 reason: need to install lxml lib
 1. pip install wheel
 2. download the lxml file: www.lfd.uci.edu/~gohlke/pythonlibs/
-3. install the downloaded file: pip install lxml_文件名.whl
+3. install the downloaded file: pip install lxml_name.whl
 '''
 # codes are used to download the background pic. of the ulr www.bing.com.
 
@@ -31,14 +31,19 @@ im = requests.get(iurl).content
 #.content  will return the byte type data
 
 date = time.strftime('%m-%d-%Y-%H%M%S', time.localtime())
-path = 'D:/BingPic/' + date + '.jpg'
 
-print(path)
+fold_path = 'D:/BingPic/'
+
+if not os.path.exists(fold_path):
+    os.mkdir(fold_path)
+
+path = fold_path + date + '.jpg'
 
 with open(path, 'wb')as imf:
 
     imf.write(im)
 
+print(path + " is created")
 # set the desktop background picture with the win32 API
 # open the register path
 reg_key = win32api.RegOpenKeyEx(
