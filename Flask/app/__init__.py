@@ -3,10 +3,23 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
+from config import config
+import os
 
+app = Flask(__name__)
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
+
+'''
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+app.config['SQLALCHEMY_DATABASE_URI'] =\
+    'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+db = SQLAlchemy(app)
+'''
+
 moment = Moment()
 
 login_manager = LoginManager()
@@ -18,7 +31,11 @@ def create_app(config_name):
     # ...
 
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'hardtoguess'
+    # app.config['SECRET_KEY'] = 'hardtoguess'
+
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
+
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
@@ -26,5 +43,5 @@ def create_app(config_name):
     db.init_app(app)
     bootstrap.init_app(app)
     moment.init_app(app)
-
+    # app.debug = True
     return app
