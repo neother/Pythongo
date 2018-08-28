@@ -4,8 +4,8 @@ from flask_login import login_user
 from . import auth
 from . import main
 from ..models import User
-from .forms import LoginForm
-
+from .forms import LoginForm, RegistrationForm
+from app import db
 
 from flask_login import logout_user, login_required
 
@@ -23,10 +23,23 @@ def login():
     return render_template('auth/login.html', form=form)
 
 
-@main.route('/index')
-@login_required
+@auth.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(email=form.email.data,
+                    username=form.username.data,
+                    password=form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('You can now login.')
+        return redirect(url_for('auth.login'))
+    return render_template('auth/register.html', form=form)
+
+
+@main.route('/')
 def index():
-    #flash('thanks for logging')
+    flash('WELCOME TO CHEETAHNET')
     return render_template('index.html')
 
 
