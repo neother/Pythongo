@@ -5,12 +5,13 @@ from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from config import config
 import os
+from flask_mail import Mail
 
 app = Flask(__name__)
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
-
+mail = Mail()
 '''
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -46,5 +47,6 @@ def create_app(config_name):
     db.init_app(app)
     bootstrap.init_app(app)
     moment.init_app(app)
+    mail.init_app(app)
     # app.debug = True
     return app
