@@ -9,4 +9,4 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[Required()])
     remember_me = BooleanField('Keep me logged in')
     submit = SubmitField('Log In')
-#   test = PasswordField('test', validators=[Required()])
+    #test = PasswordField('test', validators=[Required()])
