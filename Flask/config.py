@@ -6,7 +6,7 @@ class Config:
     #SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
     SECRET_KEY = 'hard to guess string'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
-    FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
+    FLASKY_MAIL_SUBJECT_PREFIX = '[Cheetahnet]'
     FLASKY_MAIL_SENDER = '401316161@qq.com'
    # FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
 
@@ -24,7 +24,7 @@ class DevelopmentConfig(Config):
     MAIL_PORT = 465
     MAIL_USE_SSL = True
     MAIL_USERNAME = '401316161@qq.com'
-    MAIL_PASSWORD = 'vcdhktabanwccbce'
+    MAIL_PASSWORD = 'taovcdhktabanwccbceqi'
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         'DEV_DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
