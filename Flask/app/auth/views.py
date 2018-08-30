@@ -109,7 +109,7 @@ def password_change():
 def password_reset_request():
 
     flash('<h1>set password via sending a email</h1>')
-    return render_template('auth/password_reset_request.html')
+    return render_template('main/index.html')
 
 
 @auth.route('/deleteself')
