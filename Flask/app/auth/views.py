@@ -2,9 +2,9 @@ from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user
 
 from . import auth
-from . import main
+
 from ..models import User
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, RegistrationForm, ChangepasswordForm
 from app import db
 
 from flask_login import logout_user, login_required, current_user
@@ -18,7 +18,7 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.verify_password(form.password.data):
             login_user(user, form.remember_me.data)
-            return redirect(request.args.get('next') or url_for('main.index'))
+            return redirect(url_for('main.index'))
        #     return redirect(request.args.get('next') or url_for('auth.index'))
         flash('Invalid username or password.')
     return render_template('auth/login.html', form=form)
@@ -80,12 +80,6 @@ def resend_confirmation():
     return redirect(url_for('main.index'))
 
 
-@main.route('/')
-def index():
-    flash('WELCOME TO CHEETAHNET')
-    return render_template('main/index.html')
-
-
 @auth.route('/logout')
 @login_required
 def logout():
@@ -93,6 +87,46 @@ def logout():
     flash('You have been logged out.')
     return redirect(url_for('auth.login'))
 
+
+@auth.route('/password_change', methods=['GET', 'POST'])
+@login_required
+def password_change():
+    form = ChangepasswordForm()
+    if form.validate_on_submit():
+        if current_user.verify_password(form.old_password.data):
+            current_user.password = form.new_password.data
+            db.session.add(current_user)
+            db.session.commit()
+            flash('Password has been changed successfully')
+            return redirect(url_for('auth.login'))
+        else:
+            flash('Old Password is not correct')
+
+    return render_template('auth/password_change.html', form=form)
+
+
+@auth.route('/password_reset_request')
+def password_reset_request():
+
+    flash('<h1>set password via sending a email</h1>')
+    return render_template('auth/password_reset_request.html')
+
+
+@auth.route('/deleteself')
+def deleteself():
+
+    db.session.delete(current_user)
+    db.session.commit()
+    flash('current user has been deleted')
+    return redirect(url_for('auth.login'))
+
+
+'''no need this route, email is not changeable
+@auth.route('/change_email_request')
+@login_required
+def change_email_request():
+    return '<h1>changed email address</h1>'
+'''
 
 '''
 @app.route('/secret')

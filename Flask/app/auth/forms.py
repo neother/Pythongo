@@ -11,6 +11,7 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[Required()])
     remember_me = BooleanField('Keep me logged in')
     submit = SubmitField('Log In')
+   # resetpasswd = SubmitField('Rest Password')
     #test = PasswordField('test', validators=[Required()])
 
 
@@ -35,3 +36,29 @@ class RegistrationForm(FlaskForm):
     def validate_username(self, field):
         if User.query.filter_by(username=field.data).first():
             raise ValidationError('Username already in use.')
+
+
+class ChangepasswordForm(FlaskForm):
+
+    old_password = PasswordField('Old Password', validators=[Required()])
+
+    new_password = PasswordField('New Password', validators=[Required(), EqualTo(
+        'confirm_new_password', message='Passwords must match.')])
+    confirm_new_password = PasswordField(
+        'Confirm New Password', validators=[Required()])
+
+    submit = SubmitField('Submit')
+
+
+'''
+class ChangeemailForm(FlaskForm):
+
+    old_password = PasswordField('Old Password', validators=[Required()])
+
+    new_password = PasswordField('New Password', validators=[Required(), EqualTo(
+        'confirm_new_password', message='Passwords must match.')])
+    confirm_new_password = PasswordField(
+        'Confirm Password', validators=[Required()])
+
+    submit = SubmitField('Confirm')
+'''
