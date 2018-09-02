@@ -49,6 +49,24 @@ class User(UserMixin, db.Model):
         db.session.commit()
         return True
 
+    def generate_resetpassword_token(self, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'resetpasssword': self.id})
+
+    def reset_password(token, newpassword):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        user = User.query.filter_by(id=data.get('resetpasssword')).first()
+        if user is None:
+            return False
+        user.password = newpassword
+        db.session.add(user)
+        db.session.commit()
+        return True
+
 
 class Role(db.Model):
     __tablename__ = 'roles'

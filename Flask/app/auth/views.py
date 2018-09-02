@@ -2,13 +2,15 @@ from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user
 
 from . import auth
-from . import main
+
 from ..models import User
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, RegistrationForm, ChangepasswordForm, PasswordResetRequestForm, PasswordResetForm
 from app import db
 
 from flask_login import logout_user, login_required, current_user
 from ..email import send_email
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from flask import current_app
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -18,7 +20,7 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.verify_password(form.password.data):
             login_user(user, form.remember_me.data)
-            return redirect(request.args.get('next') or url_for('main.index'))
+            return redirect(url_for('main.index'))
        #     return redirect(request.args.get('next') or url_for('auth.index'))
         flash('Invalid username or password.')
     return render_template('auth/login.html', form=form)
@@ -41,6 +43,14 @@ def register():
     return render_template('auth/register.html', form=form)
 
 
+########################## common def will run before every request##########################
+@auth.before_app_request
+def before_request():
+    if current_user.is_authenticated and not current_user.confirmed and request.endpoint[:4] != 'auth' and request.endpoint != 'static':
+        return redirect(url_for('auth.unconfirmed'))
+########################## common def will run before every request##########################
+
+
 @auth.route('/confirm/<token>')
 @login_required
 def confirm(token):
@@ -52,13 +62,6 @@ def confirm(token):
     else:
         flash('The confirmation link is invalid or has expired.')
     return redirect(url_for('main.index'))
-
-
-# common def will run before every request
-@auth.before_app_request
-def before_request():
-    if current_user.is_authenticated and not current_user.confirmed and request.endpoint[:4] != 'auth' and request.endpoint != 'static':
-        return redirect(url_for('auth.unconfirmed'))
 
 
 @auth.route('/unconfirmed')
@@ -80,10 +83,65 @@ def resend_confirmation():
     return redirect(url_for('main.index'))
 
 
-@main.route('/')
-def index():
-    flash('WELCOME TO CHEETAHNET')
-    return render_template('main/index.html')
+#######################################password change###############################################################
+
+
+@auth.route('/password_change', methods=['GET', 'POST'])
+@login_required
+def password_change():
+    form = ChangepasswordForm()
+    if form.validate_on_submit():
+        if current_user.verify_password(form.old_password.data):
+            current_user.password = form.new_password.data
+            db.session.add(current_user)
+            db.session.commit()
+            flash('Password has been changed successfully')
+            return redirect(url_for('auth.login'))
+        else:
+            flash('Old Password is not correct')
+
+    return render_template('auth/password_change.html', form=form)
+
+#######################################password change###############################################################
+#######################################password reset###############################################################
+
+
+@auth.route('/password_reset_request', methods=['GET', 'POST'])
+def password_reset_request():
+    form = PasswordResetRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+
+        if user is None:
+            flash('Invalid email address, check again')
+        else:
+            token = user.generate_resetpassword_token()
+            send_email(form.email.data, 'Reset Your Password',
+                       'auth/email/resetpassword', user=user, token=token)
+            flash('A password reset email has been sent to your registered email')
+            return redirect(url_for('main.index'))
+
+    return render_template('auth/password_reset.html', form=form)
+
+
+@auth.route('/password_reset/<token>', methods=['GET', 'POST'])
+def password_reset(token):
+
+    form = PasswordResetForm()
+
+    if form.validate_on_submit():
+
+        if User.reset_password(token, form.new_password.data):
+            flash('Password has been reset, Please loggin again')
+            return redirect(url_for('auth.login'))
+        else:
+            flash('Token does not match')
+            return redirect(url_for('auth.login'))
+
+    return render_template('auth/password_reset.html', form=form)
+
+
+#######################################password reset###############################################################
 
 
 @auth.route('/logout')
@@ -93,6 +151,22 @@ def logout():
     flash('You have been logged out.')
     return redirect(url_for('auth.login'))
 
+
+@auth.route('/deleteself')
+def deleteself():
+
+    db.session.delete(current_user)
+    db.session.commit()
+    flash('current user has been deleted')
+    return redirect(url_for('auth.login'))
+
+
+'''no need this route, email is not changeable
+@auth.route('/change_email_request')
+@login_required
+def change_email_request():
+    return '<h1>changed email address</h1>'
+'''
 
 '''
 @app.route('/secret')
