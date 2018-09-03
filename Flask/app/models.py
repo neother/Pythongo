@@ -6,6 +6,7 @@ from . import login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 from . import db
+from datetime import datetime
 
 
 class User(UserMixin, db.Model):
@@ -16,6 +17,12 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     confirmed = db.Column(db.Boolean, default=False)
+
+    name = db.Column(db.String(64))
+    location = db.Column(db.String(64))
+    about_me = db.Column(db.Text())
+    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
+    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
 
     @property
     def password(self):
@@ -74,15 +81,20 @@ class User(UserMixin, db.Model):
                 self.role = Role.query.filter_by(name='Administrator').first()
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
-        #if self.email is not None and self.avatar_hash is None:
+        # if self.email is not None and self.avatar_hash is None:
         #    self.avatar_hash = self.gravatar_hash()
-        #self.follow(self)
+        # self.follow(self)
 
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
 
     def is_administrator(self):
         return self.can(Permission.ADMIN)
+
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        db.session.add(self)
+
 
 class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
@@ -91,8 +103,8 @@ class AnonymousUser(AnonymousUserMixin):
     def is_administrator(self):
         return False
 
-login_manager.anonymous_user = AnonymousUser
 
+login_manager.anonymous_user = AnonymousUser
 
 
 class Permission:
@@ -102,6 +114,7 @@ class Permission:
     MODERATE = 8
     ADMIN = 16
 
+
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
@@ -109,7 +122,6 @@ class Role(db.Model):
     default = db.Column(db.Boolean, default=False, index=True)
     permissions = db.Column(db.Integer)
     users = db.relationship('User', backref='role', lazy='dynamic')
-
 
     @staticmethod
     def insert_roles():
@@ -126,7 +138,7 @@ class Role(db.Model):
             role = Role.query.filter_by(name=r).first()
             if role is None:
                 role = Role(name=r)
-            role.reset_permissions()
+            role.permissions = 0
             for perm in roles[r]:
                 role.add_permission(perm)
             role.default = (role.name == default_role)

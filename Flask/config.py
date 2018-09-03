@@ -7,7 +7,7 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     FLASKY_MAIL_SUBJECT_PREFIX = '[Cheetahnet]'
     FLASKY_MAIL_SENDER = '401316161@qq.com'
-   # FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
+    FLASKY_ADMIN = '401316161@qq.com'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

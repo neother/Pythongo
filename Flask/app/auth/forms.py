@@ -65,7 +65,8 @@ class PasswordResetForm(FlaskForm):
 
     submit = SubmitField('Submit')
 
-   # resetpasswd = SubmitField('Rest Password')
+
+# resetpasswd = SubmitField('Rest Password')
 
 
 '''
