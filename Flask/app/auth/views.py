@@ -3,7 +3,7 @@ from flask_login import login_user
 
 from . import auth
 
-from ..models import User
+from ..models import User, Post
 from .forms import *
 from app import db
 
@@ -163,6 +163,18 @@ def deleteself():
     db.session.commit()
     flash('current user has been deleted')
     return redirect(url_for('auth.login'))
+
+
+@auth.route('/removeallpost')
+def removeallpost():
+
+    allthepost = Post.query.all()
+    for post in allthepost:
+        db.session.delete(post)
+
+    db.session.commit()
+    flash('all the posthas been deleted')
+    return redirect(url_for('main.index'))
 
 
 '''no need this route, email is not changeable
