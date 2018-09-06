@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
-{% block title %}Cheetahnet - User Profile{% endblock %}
+{% import "_macros.html" as macros %}
+{% block title %}Thought - User Profile{% endblock %}
 {% block page_content %}
     <div class="page-header">
         <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=230) }}">
@@ -35,6 +36,11 @@
         </div>
     </div>
     <h3>Posts by {{ user.username }}</h3>
+
      {% include '_posts.html' %}
+
+     <div class="pagination">
+        {{ macros.pagination_widget(pagination, '.user',username=user.username) }}
+    </div>
 
 {% endblock %}
