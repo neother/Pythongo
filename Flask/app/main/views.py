@@ -30,7 +30,7 @@ def index():
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
-    print(pagination.iter_pages())
+    #print(pagination.iter_pages())
     return render_template('index.html', form=form, posts=posts,
                            pagination=pagination)
     # show_followed=show_followed, pagination=pagination)

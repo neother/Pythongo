@@ -2,9 +2,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, BooleanField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, Regexp
 from wtforms import ValidationError
-#from flask_pagedown.fields import PageDownField
-from ..models import Role, User
 
+from ..models import Role, User
+from flask_pagedown.fields import PageDownField
 
 class EditProfileForm(FlaskForm):
     name = StringField('Real name', validators=[Length(0, 64)])
@@ -46,5 +46,5 @@ class EditProfileAdminForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    body = TextAreaField("Anything want to share?", validators=[DataRequired()])
+    body = PageDownField("Anything want to share?", validators=[DataRequired()])
     submit = SubmitField('Submit')

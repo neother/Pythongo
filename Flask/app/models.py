@@ -9,7 +9,8 @@ from . import db
 from datetime import datetime
 import hashlib
 from flask import request
-
+from markdown import markdown
+import bleach
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -90,6 +91,7 @@ class User(UserMixin, db.Model):
             self.avatar_hash = self.gravatar_hash()
 
          # self.follow(self)
+
 
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
@@ -198,6 +200,8 @@ class Post(db.Model):
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    body_html = db.Column(db.Text)
+
 
     @staticmethod
     def generate_fake(count=30):
@@ -216,6 +220,20 @@ class Post(db.Model):
         db.session.commit()
 
 
+    @staticmethod
+    def on_changed_body(target, value, oldvalue, initiator):
+
+        attrs = {'*': ['class'],
+                'a': ['href', 'rel'],
+                'img': ['src', 'alt']
+                }
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+        'h1', 'h2', 'h3', 'p', 'src', 'img']
+     #   target.body_html = bleach.linkify(bleach.clean(markdown(value, output_format='html'),tags=allowed_tags, attributes=attrs, strip=True))
+        target.body_html = bleach.linkify(markdown(value, output_format='html'))
+
+db.event.listen(Post.body, 'set', Post.on_changed_body)
 '''
      @staticmethod
     def remove_fake():

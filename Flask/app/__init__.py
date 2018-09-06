@@ -6,12 +6,17 @@ from flask_moment import Moment
 from config import config
 import os
 from flask_mail import Mail
+from flask_pagedown import PageDown
+
 
 app = Flask(__name__)
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
 mail = Mail()
+pagedown = PageDown()
+
+
 '''
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -47,5 +52,6 @@ def create_app(config_name):
     bootstrap.init_app(app)
     moment.init_app(app)
     mail.init_app(app)
+    pagedown.init_app(app)
     # app.debug = True
     return app
