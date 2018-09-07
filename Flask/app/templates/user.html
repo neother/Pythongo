@@ -1,25 +1,27 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "_macros.html" as macros %}
-{% block title %}Thought - User Profile{% endblock %}
+{% block title %}Share - User Profile{% endblock %}
 {% block page_content %}
     <div class="page-header">
         <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=230) }}">
         <div class="profile-header">
-            <h1>{{ user.username }}</h1>
+            <h2>{{ user.username }}</h2>
             
             {% if user.name or user.location %}
                 <p>
-                    {% if user.name %}{{ user.name }}<br>{% endif %}
+                    {% if user.name %}Real name: {{ user.name }}{% endif %}<br>
+                </p>
+                <p>
                     {% if user.location %}
-                        from <a href="http://map.baidu.com/">{{ user.location }}</a><br>
+                        City: <a href="http://map.baidu.com/">{{ user.location }}</a><br>
                     {% endif %}
                 </p>
             {% endif %}
             {% if current_user.is_administrator() %}
-                <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+                <p>Email: <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
             {% endif %}
-            {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+            {% if user.about_me %}<p>About me: {{ user.about_me }}</p>{% endif %}
             <p>
                 Member since {{ moment(user.member_since).format('L') }}.
                 Last time logged {{ moment(user.last_seen).fromNow() }}.
@@ -32,16 +34,12 @@
                     <a class="btn btn-danger" href="{{ url_for('.edit_profile_admin', id=user.id) }}">Edit Profile [Admin]</a>
                 {% endif %}
             </p>
-              
+            
         </div>
     </div>
-
     <h3>Posted by {{ user.username }}</h3>
-
-     {% include '_posts.html' %}
-
-     <div class="pagination">
+    {% include '_posts.html' %}
+    <div class="pagination">
         {{ macros.pagination_widget(pagination, '.user',username=user.username) }}
     </div>
-
 {% endblock %}

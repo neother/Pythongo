@@ -12,6 +12,7 @@ from flask import request
 from markdown import markdown
 import bleach
 
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -28,6 +29,7 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    comments = db.relationship('Comment', backref='author', lazy='dynamic')
 
     @property
     def password(self):
@@ -91,7 +93,6 @@ class User(UserMixin, db.Model):
             self.avatar_hash = self.gravatar_hash()
 
          # self.follow(self)
-
 
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
@@ -201,7 +202,7 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     body_html = db.Column(db.Text)
-
+    comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
     @staticmethod
     def generate_fake(count=30):
@@ -219,29 +220,47 @@ class Post(db.Model):
 
         db.session.commit()
 
+    @staticmethod
+    def on_changed_body(target, value, oldvalue, initiator):
+
+        attrs = {'*': ['class'],
+                 'a': ['href', 'rel'],
+                 'img': ['src', 'alt']
+                 }
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p', 'src', 'img']
+        target.body_html = bleach.linkify(bleach.clean(markdown(
+            value, output_format='html'), tags=allowed_tags, attributes=attrs, strip=True))
+       # target.body_html = bleach.linkify(markdown(value, output_format='html'))
+
+
+db.event.listen(Post.body, 'set', Post.on_changed_body)
+
+
+class Comment(db.Model):
+
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    body_html = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    disabled = db.Column(db.Boolean)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
 
         attrs = {'*': ['class'],
-                'a': ['href', 'rel'],
-                'img': ['src', 'alt']
-                }
+                 'a': ['href', 'rel'],
+                 'img': ['src', 'alt']
+                 }
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
-        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-        'h1', 'h2', 'h3', 'p', 'src', 'img']
-     #   target.body_html = bleach.linkify(bleach.clean(markdown(value, output_format='html'),tags=allowed_tags, attributes=attrs, strip=True))
-        target.body_html = bleach.linkify(markdown(value, output_format='html'))
-
-db.event.listen(Post.body, 'set', Post.on_changed_body)
-'''
-     @staticmethod
-    def remove_fake():
-        u = User.query.all()
-        for user in u:
-            p = Post(body ='',timestamp
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p', 'src', 'img']
+        target.body_html = bleach.linkify(bleach.clean(markdown(
+            value, output_format='html'), tags=allowed_tags, attributes=attrs, strip=True))
 
 
-                )
-
-'''
+db.event.listen(Comment.body, 'set', Comment.on_changed_body)

@@ -3,7 +3,7 @@ from flask_login import login_user
 
 from . import auth
 
-from ..models import User, Post
+from ..models import User, Post, Comment
 from .forms import *
 from app import db
 
@@ -174,6 +174,18 @@ def removeallpost():
 
     db.session.commit()
     flash('all the posthas been deleted')
+    return redirect(url_for('main.index'))
+
+
+@auth.route('/removeallcomment')
+def removeallcomment():
+
+    removeallcomment = Comment.query.all()
+    for comment in removeallcomment:
+        db.session.delete(comment)
+
+    db.session.commit()
+    flash('all the comment has been deleted')
     return redirect(url_for('main.index'))
 
 

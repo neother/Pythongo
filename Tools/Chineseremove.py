@@ -2,11 +2,9 @@
 
 import requests
 import re
-from bs4 import BeautifulSoup
+
 import time
-import win32api
-import win32con
-import win32gui
+
 import os
 
 

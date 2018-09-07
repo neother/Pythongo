@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Share - Post{% endblock %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block page_content %}
+   {% include '_posts.html' %}
+
+    
+   
+    {{ wtf.quick_form(form) }}
+    <div class="comment-form">
+    <br>
+    <h5>Comments listed below:</h5>
+    </div>
+    
+    {% include '_comments.html' %}
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+    {{ pagedown.include_pagedown() }}
+{% endblock %}

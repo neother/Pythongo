@@ -6,6 +6,7 @@ from wtforms import ValidationError
 from ..models import Role, User
 from flask_pagedown.fields import PageDownField
 
+
 class EditProfileForm(FlaskForm):
     name = StringField('Real name', validators=[Length(0, 64)])
     location = StringField('Location', validators=[Length(0, 64)])
@@ -46,5 +47,11 @@ class EditProfileAdminForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    body = PageDownField("Anything want to share?", validators=[DataRequired()])
+    body = PageDownField("Anything want to share?",
+                         validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+class CommentForm(FlaskForm):
+    body = PageDownField('Type your comment:', validators=[DataRequired()])
     submit = SubmitField('Submit')
