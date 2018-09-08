@@ -7,7 +7,7 @@ driver = webdriver.Chrome()
 driver.get('http://127.0.0.1:5000/')
 time.sleep(0.5)
 
-nav_bar = ['Cheetahnet', 'Home', 'Sign In']
+nav_bar = ['Share', 'Home', 'Sign In']
 
 index = 0
 for x in nav_bar:

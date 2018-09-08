@@ -3,8 +3,8 @@ from flask_login import login_user
 
 from . import auth
 
-from ..models import User
-from .forms import LoginForm, RegistrationForm, ChangepasswordForm, PasswordResetRequestForm, PasswordResetForm
+from ..models import User, Post, Comment
+from .forms import *
 from app import db
 
 from flask_login import logout_user, login_required, current_user
@@ -46,8 +46,12 @@ def register():
 ########################## common def will run before every request##########################
 @auth.before_app_request
 def before_request():
-    if current_user.is_authenticated and not current_user.confirmed and request.endpoint[:4] != 'auth' and request.endpoint != 'static':
-        return redirect(url_for('auth.unconfirmed'))
+    if current_user.is_authenticated:
+        current_user.ping()
+        if not current_user.confirmed \
+                and request.blueprint != 'auth' \
+                and request.endpoint != 'static':
+            return redirect(url_for('auth.unconfirmed'))
 ########################## common def will run before every request##########################
 
 
@@ -159,6 +163,30 @@ def deleteself():
     db.session.commit()
     flash('current user has been deleted')
     return redirect(url_for('auth.login'))
+
+
+@auth.route('/removeallpost')
+def removeallpost():
+
+    allthepost = Post.query.all()
+    for post in allthepost:
+        db.session.delete(post)
+
+    db.session.commit()
+    flash('all the posthas been deleted')
+    return redirect(url_for('main.index'))
+
+
+@auth.route('/removeallcomment')
+def removeallcomment():
+
+    removeallcomment = Comment.query.all()
+    for comment in removeallcomment:
+        db.session.delete(comment)
+
+    db.session.commit()
+    flash('all the comment has been deleted')
+    return redirect(url_for('main.index'))
 
 
 '''no need this route, email is not changeable
