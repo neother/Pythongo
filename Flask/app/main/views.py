@@ -138,4 +138,25 @@ def delete_post(id):
         flash('The post has been deleted.')
     return redirect(url_for('main.index'))
     
- 
+
+
+@main.route('/disable/<int:id>')
+@login_required
+def disable(id):
+    comment = Comment.query.get_or_404(id)
+    if current_user.can(Permission.COMMENT):
+
+       
+        flash('The comment has been disable.')
+    return redirect(url_for('main.post', id = comment.post_id))
+
+
+@main.route('/enable/<int:id>')
+@login_required
+def enabled(id):
+    comment = Comment.query.get_or_404(id)
+    if current_user.can(Permission.COMMENT):
+
+       
+        flash('The comment has been enable.')
+    return redirect(url_for('main.post', id = comment.post_id))
