@@ -38,7 +38,9 @@
         </div>
     </div>
     <h3>Posted by {{ user.username }}</h3>
+
     {% include '_posts.html' %}
+    
     <div class="pagination">
         {{ macros.pagination_widget(pagination, '.user',username=user.username) }}
     </div>

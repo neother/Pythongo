@@ -14,6 +14,7 @@ from ..decorators import admin_required, permission_required
 from .forms import *
 from flask import current_app
 #from flask_sqlalchemy import Pagination
+#from flask_restful import request
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -95,6 +96,7 @@ def edit_profile_admin(id):
 
 
 @main.route('/post/<int:id>', methods=['GET', 'POST'])
+@login_required
 def post(id):
     post = Post.query.get_or_404(id)
     form = CommentForm()
@@ -113,7 +115,7 @@ def post(id):
 @login_required
 def edit(id):
     post = Post.query.get_or_404(id)
-    if current_user != post.author and not current_user.can(Permission.ADMINISTER):
+    if current_user != post.author and not current_user.can(Permission.ADMIN):
 
         abort(403)
     form = PostForm()
@@ -124,3 +126,16 @@ def edit(id):
         return redirect(url_for('.post', id=post.id))
     form.body.data = post.body
     return render_template('edit_post.html', form=form)
+
+@main.route('/delete_post/<int:id>')
+@login_required
+def delete_post(id):
+    post = Post.query.get_or_404(id)
+    if current_user.can(Permission.ADMIN):
+
+        db.session.delete(post)
+        db.session.commit()
+        flash('The post has been deleted.')
+    return redirect(url_for('main.index'))
+    
+ 

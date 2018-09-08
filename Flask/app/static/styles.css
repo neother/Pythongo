@@ -64,6 +64,9 @@ div.comment-date {
 div.comment-author {
     font-weight: bold;
 }
+div.comment-footer {
+    text-align: right;
+}
 div.comment-thumbnail {
     position: absolute;
 }

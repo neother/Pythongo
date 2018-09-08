@@ -21,6 +21,12 @@
                     {% endif %}
                 {% endif %}
             </div>
+
+            <div class="comment-footer">
+                   {% if current_user.email == '401316161@qq.com' %}
+                    <a href="{{ url_for('.moderator', id=comment.id) }}"><span class="label label-warning">Moderator</span></a>
+                                        {% endif %}
+            </div>
         </div>
     </li>
     {% endfor %}
