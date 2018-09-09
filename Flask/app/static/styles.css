@@ -119,3 +119,23 @@ div.flask-pagedown-preview h3 {
 .label-info {
   background-color: #A0CBE7;
 }
+
+div.aboutme-center {
+    text-align: center;
+}
+
+div.aboutme-blod {
+    font-weight: bold;
+    
+}
+
+div.aboutme-indent130 {
+    margin-right: 130px;
+    margin-left: 130px;
+}
+
+
+div.aboutme-indent150 {
+    margin-right: 15px;
+    margin-left: 15px;
+}

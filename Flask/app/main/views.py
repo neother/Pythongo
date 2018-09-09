@@ -2,7 +2,7 @@ from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user
 
 from . import main
-from ..models import User, Permission, Post, Comment
+from ..models import *
 # from .forms import LoginForm, RegistrationForm
 from app import db
 
@@ -170,3 +170,10 @@ def enable(id):
        
         flash('The comment has been enable.')
     return redirect(url_for('main.post', id = comment.post_id))
+
+
+
+@main.route('/aboutme')
+def aboutme():
+    form = AboutmeForm()
+    return render_template('aboutme.html', form = form)
