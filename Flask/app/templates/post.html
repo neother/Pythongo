@@ -3,11 +3,13 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block page_content %}
 	{% include '_posts.html' %}
+	
+	<h3 id = "comments">Comments</h3>
 	{{ wtf.quick_form(form) }}
 	
-		
+	
 	{% include '_comments.html' %}
-
+	
 {% endblock %}
 {% block scripts %}
 	{{ super() }}
