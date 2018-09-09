@@ -8,7 +8,11 @@ from flask_pagedown.fields import PageDownField
 
 
 class EditProfileForm(FlaskForm):
-    name = StringField('Real name', validators=[Length(0, 64)])
+    username = StringField('Username', validators=[
+        DataRequired(), Length(1, 64),
+        Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
+               'Usernames must have only letters, numbers, dots or '
+               'underscores')])
     location = StringField('Location', validators=[Length(0, 64)])
     about_me = TextAreaField('About me')
     submit = SubmitField('Submit')
@@ -24,7 +28,7 @@ class EditProfileAdminForm(FlaskForm):
                'underscores')])
     confirmed = BooleanField('Confirmed')
     role = SelectField('Role', coerce=int)
-    name = StringField('Real name', validators=[Length(0, 64)])
+    
     location = StringField('Location', validators=[Length(0, 64)])
     about_me = TextAreaField('About me')
     submit = SubmitField('Submit')
@@ -53,5 +57,5 @@ class PostForm(FlaskForm):
 
 
 class CommentForm(FlaskForm):
-    body = PageDownField('Type your comment:', validators=[DataRequired()])
+    body = PageDownField('Enter your comment:', validators=[DataRequired()])
     submit = SubmitField('Submit')

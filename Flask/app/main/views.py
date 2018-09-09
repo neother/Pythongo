@@ -54,14 +54,14 @@ def user(username):
 def edit_profile():
     form = EditProfileForm()
     if form.validate_on_submit():
-        current_user.name = form.name.data
+        current_user.username = form.username.data
         current_user.location = form.location.data
         current_user.about_me = form.about_me.data
         db.session.add(current_user._get_current_object())
         db.session.commit()
         flash('Your profile has been updated.')
         return redirect(url_for('.user', username=current_user.username))
-    form.name.data = current_user.name
+    form.username.data = current_user.username
     form.location.data = current_user.location
     form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', form=form)
@@ -78,7 +78,7 @@ def edit_profile_admin(id):
         user.username = form.username.data
         user.confirmed = form.confirmed.data
         user.role = Role.query.get(form.role.data)
-        user.name = form.name.data
+        #user.name = form.name.data
         user.location = form.location.data
         user.about_me = form.about_me.data
         db.session.add(user)
@@ -89,7 +89,7 @@ def edit_profile_admin(id):
     form.username.data = user.username
     form.confirmed.data = user.confirmed
     form.role.data = user.role_id
-    form.name.data = user.name
+    #form.name.data = user.name
     form.location.data = user.location
     form.about_me.data = user.about_me
     return render_template('edit_profile.html', form=form, user=user)
@@ -138,4 +138,35 @@ def delete_post(id):
         flash('The post has been deleted.')
     return redirect(url_for('main.index'))
     
- 
+
+
+@main.route('/disable/<int:id>')
+@login_required
+def disable(id):
+    comment = Comment.query.get_or_404(id)
+    if current_user.can(Permission.COMMENT):
+        
+        comment.disabled = True
+
+        db.session.add(comment)
+
+        db.session.commit()
+       
+        flash('The comment has been disable.')
+    return redirect(url_for('main.post', id = comment.post_id))
+
+
+@main.route('/enable/<int:id>')
+@login_required
+def enable(id):
+    comment = Comment.query.get_or_404(id)
+    if current_user.can(Permission.COMMENT):
+
+        comment.disabled = False
+
+        db.session.add(comment)
+
+        db.session.commit()
+       
+        flash('The comment has been enable.')
+    return redirect(url_for('main.post', id = comment.post_id))
