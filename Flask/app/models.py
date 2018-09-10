@@ -123,7 +123,7 @@ class User(UserMixin, db.Model):
         if self.email is not None and self.avatar_hash is None:
 
             self.avatar_hash = self.gravatar_hash()
-
+        self.follow(self)
          # self.follow(self)
 
     def can(self, perm):

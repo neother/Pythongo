@@ -6,7 +6,7 @@ from . import main
 from ..models import *
 
 from ..models import User, Permission, Post, Comment, Follow
->>>>>>> 202a244094785db3b5bf50699a61989e180674ce
+
 # from .forms import LoginForm, RegistrationForm
 from app import db
 
@@ -178,8 +178,8 @@ def enable(id):
 def aboutme():
     form = AboutmeForm()
 
-    return redirect(url_for('main.post', id=comment.post_id))
-    return render_template('aboutme.html', form = form)
+#    return redirect(url_for('main.post', id=comment.post_id))
+    return render_template('aboutme.html')
 
 
 @main.route('/follow/<username>')
@@ -209,10 +209,12 @@ def followers(username):
 
     return render_template('followers.html', user=user, title="Followers of", follows=follows)
 
-
-@main.route('/followers/<username>')
+ 
+@main.route('/followed_by/<username>')
 @login_required
-def followed_by():
+def followed_by(username):
 
-    pass
->>>>>>> 202a244094785db3b5bf50699a61989e180674ce
+    user = User.query.filter_by(username=username).first()
+    follows = user.followed
+
+    return render_template('followed.html', user=user, title="Followers of", follows=follows)

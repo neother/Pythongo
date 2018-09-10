@@ -124,6 +124,11 @@ div.aboutme-center {
     text-align: center;
 }
 
+div.aboutme-left {
+    text-align: left;
+}
+
+
 div.aboutme-blod {
     font-weight: bold;
     

@@ -197,7 +197,7 @@ def followadmin():
         user.follow(adminuser)
     db.session.commit()
 
-    flash('all the user followers adminuser')
+    flash('all the user followers 40131616@qq.com')
     return redirect(url_for('main.index'))
 
 
