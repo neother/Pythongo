@@ -2,7 +2,7 @@ from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user
 
 from . import main
-from ..models import User, Permission, Post, Comment
+from ..models import User, Permission, Post, Comment, Follow
 # from .forms import LoginForm, RegistrationForm
 from app import db
 
@@ -127,6 +127,7 @@ def edit(id):
     form.body.data = post.body
     return render_template('edit_post.html', form=form)
 
+
 @main.route('/delete_post/<int:id>')
 @login_required
 def delete_post(id):
@@ -137,7 +138,6 @@ def delete_post(id):
         db.session.commit()
         flash('The post has been deleted.')
     return redirect(url_for('main.index'))
-    
 
 
 @main.route('/disable/<int:id>')
@@ -145,15 +145,15 @@ def delete_post(id):
 def disable(id):
     comment = Comment.query.get_or_404(id)
     if current_user.can(Permission.COMMENT):
-        
+
         comment.disabled = True
 
         db.session.add(comment)
 
         db.session.commit()
-       
+
         flash('The comment has been disable.')
-    return redirect(url_for('main.post', id = comment.post_id))
+    return redirect(url_for('main.post', id=comment.post_id))
 
 
 @main.route('/enable/<int:id>')
@@ -161,12 +161,43 @@ def disable(id):
 def enable(id):
     comment = Comment.query.get_or_404(id)
     if current_user.can(Permission.COMMENT):
-
         comment.disabled = False
-
         db.session.add(comment)
-
         db.session.commit()
-       
         flash('The comment has been enable.')
-    return redirect(url_for('main.post', id = comment.post_id))
+    return redirect(url_for('main.post', id=comment.post_id))
+
+
+@main.route('/follow/<username>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def follow(username):
+    user = User.query.filter_by(username=username).first()
+    current_user.follow(user)
+    flash('Now you are following %s.' % username)
+    return redirect(url_for('.user', username=username))
+
+
+@main.route('/unfollow/<username>')
+@login_required
+def unfollow(username):
+    user = User.query.filter_by(username=username).first()
+    current_user.unfollow(user)
+    flash('Now you are unfollowing %s.' % username)
+    return redirect(url_for('.user', username=username))
+
+
+@main.route('/followers/<username>')
+@login_required
+def followers(username):
+    user = User.query.filter_by(username=username).first()
+    follows = user.followers
+
+    return render_template('followers.html', user=user, title="Followers of", follows=follows)
+
+
+@main.route('/followers/<username>')
+@login_required
+def followed_by():
+
+    pass
