@@ -37,12 +37,13 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a href="{{ url_for('auth.password_change') }}">Change Password</a></li>
-                                {% if current_user.email == '401316161@qq.com' %}
+                               
+                                {% if current_user.is_administrator() %}
 
                                     <li><a href="{{ url_for('auth.deleteself') }}">deleteself</a></li>
                                     <li><a href="{{ url_for('auth.removeallpost') }}">removeallpost</a></li>
                                     <li><a href="{{ url_for('auth.removeallcomment') }}">removeallcomment</a></li>
-
+                                    <li><a href="{{ url_for('auth.followadmin') }}">followadmin</a></li>
                                 {% endif %}
                                 <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
                             </ul>

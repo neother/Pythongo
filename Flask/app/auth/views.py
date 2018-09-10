@@ -56,7 +56,7 @@ def before_request():
 
 
 @auth.route('/confirm/<token>')
-@login_required
+#@login_required
 def confirm(token):
     if current_user.confirmed:
         flash('You have confirmed your account for more than 2 times')
@@ -186,6 +186,18 @@ def removeallcomment():
 
     db.session.commit()
     flash('all the comment has been deleted')
+    return redirect(url_for('main.index'))
+
+
+@auth.route('/followadmin')
+def followadmin():
+    adminuser = User.query.filter_by(email='401316161@qq.com').first()
+    allusers = User.query.all()
+    for user in allusers:
+        user.follow(adminuser)
+    db.session.commit()
+
+    flash('all the user followers adminuser')
     return redirect(url_for('main.index'))
 
 
