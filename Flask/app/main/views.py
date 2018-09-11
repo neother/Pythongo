@@ -218,3 +218,15 @@ def followed_by(username):
     follows = user.followed
 
     return render_template('followed.html', user=user, title="Followers of", follows=follows)
+
+
+@main.route('/shutdown')
+def server_shutdown():
+
+    if not current_app.testing:
+        abort(404)
+    shutdown = request.environ.get('werkzeug.server.shutdown')
+    if not shutdown:
+        abort(500)
+    shutdown()
+    return 'Shutting down...'
