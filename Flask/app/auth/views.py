@@ -39,7 +39,7 @@ def register():
         send_email(user.email, 'Confirm Your Account',
                    'auth/email/confirm', user=user, token=token)
         flash('A confirmation email has been sent to you by email.')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
 
 
@@ -56,7 +56,7 @@ def before_request():
 
 
 @auth.route('/confirm/<token>')
-#@login_required
+@login_required
 def confirm(token):
     if current_user.confirmed:
         flash('You have confirmed your account for more than 2 times')
