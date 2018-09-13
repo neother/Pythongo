@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Flask
 Flask-Bootstrap
 Flask-Mail
@@ -16,7 +15,6 @@ Werkzeug
 alembic
 blinker
 itsdangerous
-=======
 alembic==1.0.0
 aniso8601==3.0.2
 argh==0.26.2
@@ -61,4 +59,4 @@ watchdog==0.8.3
 webencodings==0.5.1
 Werkzeug==0.14.1
 WTForms==2.2.1
->>>>>>> 3fec743e6795ccacc1cf3b2d54535155ff8b6c92
+
