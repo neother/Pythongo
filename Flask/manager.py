@@ -42,6 +42,17 @@ def test(coverage=False):
         print('HTML version: file://%s/index.html' % covdir)
         COV.erase()
 
+@manager.command
+def profile(length=25, profile_dir=None):
+
+
+
+    from werkzeug.contrib.profiler import ProfilerMiddleware
+    app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[length],
+    profile_dir=profile_dir)
+    app.run()
+
+
 
 # manager.add_command("shell", Shell(make_context=make_shell_context()))
 manager.add_command('db', MigrateCommand)

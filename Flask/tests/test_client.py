@@ -10,13 +10,13 @@ class FlaskClientTestCase(unittest.TestCase):
         self.app = create_app('testing')
         self.app_context = self.app.app_context()
         self.app_context.push()
-
+        db.create_all()
         Role.insert_roles()
         self.client = self.app.test_client(use_cookies=True)
 
     def tearDown(self):
-        # db.session.remove()
-        # db.drop_all()
+        db.session.remove()
+        db.drop_all()
         self.app_context.pop()
 
     def test_home_page(self):
@@ -32,7 +32,7 @@ class FlaskClientTestCase(unittest.TestCase):
             'password': '123',
             'password2': '123'
         })
-        self.assertTrue(response.status_code == 200)
+        self.assertTrue(response.status_code == 302)
         # login the account
         response = self.client.post('/auth/login',
                                     data={'email': '401316161@qq.com',
@@ -47,6 +47,14 @@ class FlaskClientTestCase(unittest.TestCase):
         self.assertTrue('You have been logged out' in data)
 
     def test_post(self):
+
+        response = self.client.post('/auth/register', data={
+            'email': '401316161@qq.com',
+            'username': 'john',
+            'password': '123',
+            'password2': '123'
+        })
+
         response = self.client.post('/auth/login',
                                     data={'email': '401316161@qq.com',
                                           'password': '123'}, follow_redirects=True)
@@ -54,14 +62,16 @@ class FlaskClientTestCase(unittest.TestCase):
         user = User.query.filter_by(email='401316161@qq.com').first()
         token = user.generate_confirmation_token()
 
+        user.confirm(token)
+        
         response = self.client.get(
             '/auth/confirm/{}'.format(token), follow_redirects=True)
 
-        user.confirm(token)
+        
 
         data = response.get_data(as_text=True)
 
-        # token
+        #print(data)
 
         self.assertTrue('You have confirmed your account' in data)
 
