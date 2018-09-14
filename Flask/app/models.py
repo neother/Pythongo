@@ -31,7 +31,7 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     confirmed = db.Column(db.Boolean, default=False)
 
-    name = db.Column(db.String(64))
+    #name = db.Column(db.String(64))
     location = db.Column(db.String(64))
     about_me = db.Column(db.Text())
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
@@ -124,7 +124,7 @@ class User(UserMixin, db.Model):
 
             self.avatar_hash = self.gravatar_hash()
         self.follow(self)
-         # self.follow(self)
+        # self.follow(self)
 
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
@@ -157,7 +157,7 @@ class User(UserMixin, db.Model):
                      username=forgery_py.internet.user_name(True),
                      password=forgery_py.lorem_ipsum.word(),
                      confirmed=True,
-                     name=forgery_py.name.full_name(),
+                     # name=forgery_py.name.full_name(),
                      location=forgery_py.address.city(),
                      about_me=forgery_py.lorem_ipsum.sentence(),
                      member_since=forgery_py.date.date(True))
@@ -236,6 +236,7 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     body_html = db.Column(db.Text)
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
+    Top = db.Column(db.Integer, default=0)
 
     @staticmethod
     def generate_fake(count=30):
@@ -262,7 +263,7 @@ class Post(db.Model):
                  }
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p', 'src', 'img','center']
+                        'h1', 'h2', 'h3', 'p', 'src', 'img', 'center']
         target.body_html = bleach.linkify(bleach.clean(markdown(
             value, output_format='html'), tags=allowed_tags, attributes=attrs, strip=True))
        # target.body_html = bleach.linkify(markdown(value, output_format='html'))

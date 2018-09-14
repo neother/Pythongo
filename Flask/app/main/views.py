@@ -1,22 +1,16 @@
 from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user
-
 from . import main
-
 from ..models import *
-
 from ..models import User, Permission, Post, Comment, Follow
-
 # from .forms import LoginForm, RegistrationForm
 from app import db
-
 from flask_login import logout_user, login_required, current_user
 from ..email import send_email
-
 from ..decorators import admin_required, permission_required
-
 from .forms import *
 from flask import current_app
+from datetime import datetime
 #from flask_sqlalchemy import Pagination
 #from flask_restful import request
 
@@ -31,7 +25,7 @@ def index():
         db.session.commit()
         return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
-    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
+    pagination = Post.query.order_by(Post.Top.desc(), Post.timestamp.desc()).paginate(
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
@@ -49,7 +43,6 @@ def user(username):
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
-
     return render_template('user.html', user=user, posts=posts, pagination=pagination)
 
 
@@ -144,6 +137,20 @@ def delete_post(id):
     return redirect(url_for('main.index'))
 
 
+@main.route('/top_post/<int:id>')
+@login_required
+def top_post(id):
+    post = Post.query.get_or_404(id)
+    if current_user.can(Permission.ADMIN):
+        post.Top = 1
+        post.timestamp = datetime.utcnow()
+        db.session.add(post)
+        db.session.commit()
+
+        flash('The post has been topped.')
+    return redirect(url_for('main.index'))
+
+
 @main.route('/disable/<int:id>')
 @login_required
 def disable(id):
@@ -170,8 +177,7 @@ def enable(id):
         db.session.commit()
         flash('The comment has been enable.')
 
-    return redirect(url_for('main.post', id = comment.post_id))
-
+    return redirect(url_for('main.post', id=comment.post_id))
 
 
 @main.route('/aboutme')
@@ -209,7 +215,7 @@ def followers(username):
 
     return render_template('followers.html', user=user, title="Followers of", follows=follows)
 
- 
+
 @main.route('/followed_by/<username>')
 @login_required
 def followed_by(username):

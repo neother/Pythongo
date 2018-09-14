@@ -177,6 +177,18 @@ def removeallpost():
     return redirect(url_for('main.index'))
 
 
+@auth.route('/removealluser')
+def removealluser():
+
+    alltheuser = User.query.all()
+    for user in alltheuser:
+        if user.email != '401316161@qq.com':
+            db.session.delete(user)
+    db.session.commit()
+    flash('all the uses have been deleted')
+    return redirect(url_for('main.index'))
+
+
 @auth.route('/removeallcomment')
 def removeallcomment():
 
