@@ -5,7 +5,11 @@
 
 {% block page_content %}
 
-        <h1>Helloooo~ {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Friend{% endif %}!</h1>
+        <h3>Hello {% if current_user.is_authenticated %}
+                            {{ current_user.username }}!
+                        {% else %}
+                            Friend! Please login to share your thought.
+                        {% endif %}</h3>
 
 
         {% if current_user.can(Permission.WRITE) %}

@@ -1,18 +1,16 @@
 from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user
-
 from . import main
-from ..models import User, Permission, Post, Comment
+from ..models import *
+from ..models import User, Permission, Post, Comment, Follow
 # from .forms import LoginForm, RegistrationForm
 from app import db
-
 from flask_login import logout_user, login_required, current_user
 from ..email import send_email
-
 from ..decorators import admin_required, permission_required
-
 from .forms import *
 from flask import current_app
+from datetime import datetime
 #from flask_sqlalchemy import Pagination
 #from flask_restful import request
 
@@ -27,7 +25,7 @@ def index():
         db.session.commit()
         return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
-    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
+    pagination = Post.query.order_by(Post.Top.desc(), Post.timestamp.desc()).paginate(
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
@@ -45,7 +43,6 @@ def user(username):
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
-
     return render_template('user.html', user=user, posts=posts, pagination=pagination)
 
 
@@ -127,6 +124,7 @@ def edit(id):
     form.body.data = post.body
     return render_template('edit_post.html', form=form)
 
+
 @main.route('/delete_post/<int:id>')
 @login_required
 def delete_post(id):
@@ -137,7 +135,20 @@ def delete_post(id):
         db.session.commit()
         flash('The post has been deleted.')
     return redirect(url_for('main.index'))
-    
+
+
+@main.route('/top_post/<int:id>')
+@login_required
+def top_post(id):
+    post = Post.query.get_or_404(id)
+    if current_user.can(Permission.ADMIN):
+        post.Top = 1
+        post.timestamp = datetime.utcnow()
+        db.session.add(post)
+        db.session.commit()
+
+        flash('The post has been topped.')
+    return redirect(url_for('main.index'))
 
 
 @main.route('/disable/<int:id>')
@@ -145,15 +156,15 @@ def delete_post(id):
 def disable(id):
     comment = Comment.query.get_or_404(id)
     if current_user.can(Permission.COMMENT):
-        
+
         comment.disabled = True
 
         db.session.add(comment)
 
         db.session.commit()
-       
+
         flash('The comment has been disable.')
-    return redirect(url_for('main.post', id = comment.post_id))
+    return redirect(url_for('main.post', id=comment.post_id))
 
 
 @main.route('/enable/<int:id>')
@@ -161,12 +172,67 @@ def disable(id):
 def enable(id):
     comment = Comment.query.get_or_404(id)
     if current_user.can(Permission.COMMENT):
-
         comment.disabled = False
-
         db.session.add(comment)
-
         db.session.commit()
-       
         flash('The comment has been enable.')
-    return redirect(url_for('main.post', id = comment.post_id))
+
+    return redirect(url_for('main.post', id=comment.post_id))
+
+
+@main.route('/aboutme')
+def aboutme():
+    form = AboutmeForm()
+
+#    return redirect(url_for('main.post', id=comment.post_id))
+    return render_template('aboutme.html')
+
+
+@main.route('/follow/<username>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def follow(username):
+    user = User.query.filter_by(username=username).first()
+    current_user.follow(user)
+    flash('Now you are following %s.' % username)
+    return redirect(url_for('.user', username=username))
+
+
+@main.route('/unfollow/<username>')
+@login_required
+def unfollow(username):
+    user = User.query.filter_by(username=username).first()
+    current_user.unfollow(user)
+    flash('Now you are unfollowing %s.' % username)
+    return redirect(url_for('.user', username=username))
+
+
+@main.route('/followers/<username>')
+@login_required
+def followers(username):
+    user = User.query.filter_by(username=username).first()
+    follows = user.followers
+
+    return render_template('followers.html', user=user, title="Followers of", follows=follows)
+
+
+@main.route('/followed_by/<username>')
+@login_required
+def followed_by(username):
+
+    user = User.query.filter_by(username=username).first()
+    follows = user.followed
+
+    return render_template('followed.html', user=user, title="Followers of", follows=follows)
+
+
+@main.route('/shutdown')
+def server_shutdown():
+
+    if not current_app.testing:
+        abort(404)
+    shutdown = request.environ.get('werkzeug.server.shutdown')
+    if not shutdown:
+        abort(500)
+    shutdown()
+    return 'Shutting down...'

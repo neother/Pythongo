@@ -13,6 +13,15 @@ from markdown import markdown
 import bleach
 
 
+class Follow(db.Model):
+    __tablename__ = 'follows'
+    follower_id = db.Column(
+        db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    followed_id = db.Column(
+        db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -22,14 +31,37 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     confirmed = db.Column(db.Boolean, default=False)
 
-    name = db.Column(db.String(64))
+    #name = db.Column(db.String(64))
     location = db.Column(db.String(64))
     about_me = db.Column(db.Text())
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
-    posts = db.relationship('Post', backref='author', lazy='dynamic')
+    posts = db.relationship('Post', backref='author',
+                            lazy='dynamic', cascade='all, delete-orphan')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
+
+    followed = db.relationship('Follow', foreign_keys=[Follow.follower_id], backref=db.backref(
+        'follower', lazy='joined'), lazy='dynamic', cascade='all, delete-orphan')
+    followers = db.relationship('Follow', foreign_keys=[Follow.followed_id], backref=db.backref(
+        'followed', lazy='joined'), lazy='dynamic', cascade='all, delete-orphan')
+
+    def follow(self, user):
+        if not self.is_following(user):
+            f = Follow(follower=self, followed=user)
+            db.session.add(f)
+
+    def unfollow(self, user):
+        f = self.followed.filter_by(followed_id=user.id).first()
+        if f:
+
+            db.session.delete(f)
+
+    def is_following(self, user):
+        return self.followed.filter_by(followed_id=user.id).first() is not None
+
+    def is_followed_by(self, user):
+        return self.followers.filter_by(follower_id=user.id).first() is not None
 
     @property
     def password(self):
@@ -91,8 +123,8 @@ class User(UserMixin, db.Model):
         if self.email is not None and self.avatar_hash is None:
 
             self.avatar_hash = self.gravatar_hash()
-
-         # self.follow(self)
+        self.follow(self)
+        # self.follow(self)
 
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
@@ -125,10 +157,11 @@ class User(UserMixin, db.Model):
                      username=forgery_py.internet.user_name(True),
                      password=forgery_py.lorem_ipsum.word(),
                      confirmed=True,
-                     name=forgery_py.name.full_name(),
+                     # name=forgery_py.name.full_name(),
                      location=forgery_py.address.city(),
                      about_me=forgery_py.lorem_ipsum.sentence(),
                      member_since=forgery_py.date.date(True))
+
             db.session.add(u)
         try:
             db.session.commit()
@@ -203,6 +236,7 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     body_html = db.Column(db.Text)
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
+    Top = db.Column(db.Integer, default=0)
 
     @staticmethod
     def generate_fake(count=30):
@@ -229,7 +263,7 @@ class Post(db.Model):
                  }
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p', 'src', 'img']
+                        'h1', 'h2', 'h3', 'p', 'src', 'img', 'center']
         target.body_html = bleach.linkify(bleach.clean(markdown(
             value, output_format='html'), tags=allowed_tags, attributes=attrs, strip=True))
        # target.body_html = bleach.linkify(markdown(value, output_format='html'))

@@ -39,7 +39,7 @@ def register():
         send_email(user.email, 'Confirm Your Account',
                    'auth/email/confirm', user=user, token=token)
         flash('A confirmation email has been sent to you by email.')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
 
 
@@ -177,6 +177,18 @@ def removeallpost():
     return redirect(url_for('main.index'))
 
 
+@auth.route('/removealluser')
+def removealluser():
+
+    alltheuser = User.query.all()
+    for user in alltheuser:
+        if user.email != '401316161@qq.com':
+            db.session.delete(user)
+    db.session.commit()
+    flash('all the uses have been deleted')
+    return redirect(url_for('main.index'))
+
+
 @auth.route('/removeallcomment')
 def removeallcomment():
 
@@ -186,6 +198,18 @@ def removeallcomment():
 
     db.session.commit()
     flash('all the comment has been deleted')
+    return redirect(url_for('main.index'))
+
+
+@auth.route('/followadmin')
+def followadmin():
+    adminuser = User.query.filter_by(email='401316161@qq.com').first()
+    allusers = User.query.all()
+    for user in allusers:
+        user.follow(adminuser)
+    db.session.commit()
+
+    flash('all the user followers 40131616@qq.com')
     return redirect(url_for('main.index'))
 
 
