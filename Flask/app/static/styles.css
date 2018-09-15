@@ -1,4 +1,5 @@
 .profile-thumbnail {
+    margin-top: 3px;
     position: absolute;
 }
 .profile-header {
@@ -33,11 +34,18 @@ div.post-author {
     
 }
 div.post-thumbnail {
+
     position: absolute;
 }
 div.post-content {
+    margin-top: 5px;
     margin-left: 48px;
     min-height: 48px;
+}
+
+div.post-content-realpost{
+    margin-left: 10px;
+
 }
 div.post-footer {
     text-align: right;
@@ -97,6 +105,24 @@ div.flask-pagedown-preview h2 {
 div.flask-pagedown-preview h3 {
     font-size: 120%;
 }
+
+.post-body {
+    margin-top: 3px;
+    text-align: left;
+    
+    height:1.6em;
+    
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+
+
+
 .post-body h1 {
     font-size: 140%;
 }
@@ -143,4 +169,11 @@ div.aboutme-indent130 {
 div.aboutme-indent150 {
     margin-right: 15px;
     margin-left: 15px;
+}
+
+.topicinpost-body {
+    font-size: 20px;
+    margin-top: 3px;
+    margin-bottom :3px;
+    text-align: top;
 }

@@ -20,7 +20,8 @@ def index():
     form = PostForm()
     if current_user.can(Permission.WRITE) and form.validate_on_submit():
         post = Post(body=form.body.data,
-                    author=current_user._get_current_object())
+                    author=current_user._get_current_object(),
+                    topic = form.topic.data)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('.index'))
@@ -93,20 +94,26 @@ def edit_profile_admin(id):
 
 
 @main.route('/post/<int:id>', methods=['GET', 'POST'])
-@login_required
+#@login_required
 def post(id):
     post = Post.query.get_or_404(id)
     form = CommentForm()
     if form.validate_on_submit():
-        comment = Comment(body=form.body.data, post=post,
+
+        if current_user.is_authenticated:
+            comment = Comment(body=form.body.data, post=post,
                           author=current_user._get_current_object())
-        db.session.add(comment)
-        flash('Your comment has been published.')
-        return redirect(url_for('.post', id=post.id))
+            db.session.add(comment)
+            flash('Your comment has been published.')
+            return redirect(url_for('.post', id=post.id))
+
+        else:
+            flash('Please login to give your comment.')
+            return redirect(url_for('auth.login'))
+
     comments = post.comments
 
     return render_template('post.html', posts=[post], form=form, comments=comments)
-
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -122,6 +129,7 @@ def edit(id):
         flash('The post has been updated.')
         return redirect(url_for('.post', id=post.id))
     form.body.data = post.body
+    form.topic.data =post.topic
     return render_template('edit_post.html', form=form)
 
 
@@ -149,6 +157,22 @@ def top_post(id):
 
         flash('The post has been topped.')
     return redirect(url_for('main.index'))
+
+
+@main.route('/untop_post/<int:id>')
+@login_required
+def untop_post(id):
+    post = Post.query.get_or_404(id)
+    if current_user.can(Permission.ADMIN):
+        post.Top = 0
+        post.timestamp = datetime.utcnow()
+        db.session.add(post)
+        db.session.commit()
+
+        flash('The post has been untopped.')
+    return redirect(url_for('main.index'))
+
+
 
 
 @main.route('/disable/<int:id>')
