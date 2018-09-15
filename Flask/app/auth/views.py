@@ -212,6 +212,15 @@ def followadmin():
     flash('all the user followers 40131616@qq.com')
     return redirect(url_for('main.index'))
 
+@auth.route('/fakepost')
+def fakepost():
+    Post.generate_fake(77)
+   
+
+    flash('77 posts have been faked by 40131616@qq.com')
+    return redirect(url_for('main.index'))
+
+
 
 '''no need this route, email is not changeable
 @auth.route('/change_email_request')
