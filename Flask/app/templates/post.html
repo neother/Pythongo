@@ -2,11 +2,26 @@
 {% block title %}Share - Post{% endblock %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block page_content %}
+	
+	
+	
+	{% include '_topicinpost.html' %}
+
 
 	{% include '_posts.html' %}
 	
-	<h3 id = "comments">Comments</h3>
-	{{ wtf.quick_form(form) }}
+
+	{% if current_user.is_authenticated %}
+	 	{{ wtf.quick_form(form) }}
+
+    {% else %}
+
+    	<div class = "post-content-realpost">
+
+    		<h4>Have a comment? <a href="{{ url_for('auth.login') }}">Click here to login.</a><h4>
+    			</div>
+
+        {% endif %}
 	
 	
 	{% include '_comments.html' %}

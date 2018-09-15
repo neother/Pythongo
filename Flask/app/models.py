@@ -237,6 +237,7 @@ class Post(db.Model):
     body_html = db.Column(db.Text)
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
     Top = db.Column(db.Integer, default=0)
+    topic = db.Column(db.String(128))
 
     @staticmethod
     def generate_fake(count=30):
@@ -247,9 +248,10 @@ class Post(db.Model):
         user_count = User.query.count()
         for i in range(count):
             u = User.query.offset(randint(0, user_count - 1)).first()
-            p = Post(body=forgery_py.lorem_ipsum.sentences(1),
+            p = Post(body=forgery_py.lorem_ipsum.sentences(12),
                      timestamp=forgery_py.date.date(True),
-                     author=u)
+                     author=u,
+                     topic = forgery_py.lorem_ipsum.sentences(1))
             db.session.add(p)
 
         db.session.commit()
@@ -263,7 +265,7 @@ class Post(db.Model):
                  }
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p', 'src', 'img', 'center']
+                        'h1', 'h2', 'h3', 'p', 'src', 'img', 'center','br']
         target.body_html = bleach.linkify(bleach.clean(markdown(
             value, output_format='html'), tags=allowed_tags, attributes=attrs, strip=True))
        # target.body_html = bleach.linkify(markdown(value, output_format='html'))
@@ -292,7 +294,7 @@ class Comment(db.Model):
                  }
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p', 'src', 'img']
+                        'h1', 'h2', 'h3', 'p', 'src', 'img', 'br']
         target.body_html = bleach.linkify(bleach.clean(markdown(
             value, output_format='html'), tags=allowed_tags, attributes=attrs, strip=True))
 

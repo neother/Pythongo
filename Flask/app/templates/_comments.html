@@ -24,9 +24,12 @@
 
             <div class="comment-footer">
                    {% if current_user.email == '401316161@qq.com' %}
-                    <a href="{{ url_for('.disable', id=comment.id) }}"><span class="label label-warning">Disable</span></a>
-                    <a href="{{ url_for('.enable', id=comment.id) }}"><span class="label label-warning">Enable</span></a>
-                                        {% endif %}
+                        {% if not comment.disabled %}
+                            <a href="{{ url_for('.disable', id=comment.id) }}"><span class="label label-warning">Disable</span></a>
+                        {% else %}    
+                            <a href="{{ url_for('.enable', id=comment.id) }}"><span class="label label-info">Enable</span></a>
+                        {% endif %}
+                    {% endif %}
             </div>
         </div>
     </li>
