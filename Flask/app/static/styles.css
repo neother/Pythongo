@@ -186,10 +186,28 @@ margin-right:20px;
 }
 
 
-div.container{
+
+
+
+.container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  box-shadow: black 0px 0px 12px;
+}
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .container {
     width: 970px;
-    box-shadow: black 0px 0px 12px;
-
-
-    
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: 900px;
+  }
 }

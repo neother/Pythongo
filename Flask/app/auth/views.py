@@ -220,6 +220,25 @@ def fakepost():
     flash('77 posts have been faked by 40131616@qq.com')
     return redirect(url_for('main.index'))
 
+@auth.route('/showaboutme')
+def showaboutme():
+    allusers = User.query.all()
+    for user in allusers:
+        user.showaboutme = True
+    db.session.commit()
+    flash('showaboutme is activated')
+    return redirect(url_for('main.index'))
+
+
+@auth.route('/notshowaboutme')
+def notshowaboutme():
+    allusers = User.query.all()
+    for user in allusers:
+        user.showaboutme = False
+    db.session.commit()
+    flash('showaboutme is de-activated')
+    return redirect(url_for('main.index'))
+
 
 
 '''no need this route, email is not changeable
