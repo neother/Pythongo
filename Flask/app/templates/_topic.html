@@ -19,8 +19,7 @@
                 
                         
                     <a style="color:black" href="{{ url_for('.post', id=post.id) }}">
-                               {{ post.topic }}</a>
-               
+                        {{ post.body_html | striptags}}              
                 </div>
 
 

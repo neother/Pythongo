@@ -237,8 +237,8 @@ class Post(db.Model):
     body_html = db.Column(db.Text)
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
     Top = db.Column(db.Integer, default=0)
-    topic = db.Column(db.String(128))
-
+#    body_html_index = db.Column(db.Text)
+    
     @staticmethod
     def generate_fake(count=30):
 
@@ -250,11 +250,12 @@ class Post(db.Model):
             u = User.query.offset(randint(0, user_count - 1)).first()
             p = Post(body=forgery_py.lorem_ipsum.sentences(12),
                      timestamp=forgery_py.date.date(True),
-                     author=u,
-                     topic = forgery_py.lorem_ipsum.sentences(1))
+                     author=u)
+#                     topic = forgery_py.lorem_ipsum.sentences(1))
             db.session.add(p)
 
         db.session.commit()
+
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
@@ -272,7 +273,7 @@ class Post(db.Model):
 
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
-
+#db.event.listen(Post.body, 'set', Post.on_changed_bodyforindex)
 
 class Comment(db.Model):
 
