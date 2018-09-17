@@ -5,7 +5,7 @@ from wtforms import ValidationError
 
 from ..models import Role, User
 from flask_pagedown.fields import PageDownField
-
+#from flask_ckeditor import CKEditorField
 
 class EditProfileForm(FlaskForm):
     username = StringField('Username', validators=[
@@ -49,14 +49,14 @@ class EditProfileAdminForm(FlaskForm):
                 User.query.filter_by(username=field.data).first():
             raise ValidationError('Username already in use.')
 
-
+'''
 class PostForm(FlaskForm):
 
     #topic = StringField('Topic', validators=[Length(0, 128)])
-    body = PageDownField("Anything want to share?",
-                         validators=[DataRequired()])
+    body = StringField("Anything want to share?",
+                        validators=[DataRequired()])
     submit = SubmitField('Submit')
-
+'''
 
 class CommentForm(FlaskForm):
     body = PageDownField('Enter your comment:', validators=[DataRequired()])

@@ -13,13 +13,16 @@ from flask import current_app
 from datetime import datetime
 #from flask_sqlalchemy import Pagination
 #from flask_restful import request
-
+from flask import request
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    form = PostForm()
-    if current_user.can(Permission.WRITE) and form.validate_on_submit():
-        post = Post(body=form.body.data,
+
+    #form = PostForm()
+    #if current_user.can(Permission.WRITE) and form.validate_on_submit():
+    if current_user.can(Permission.WRITE) and request.method == 'POST':
+
+        post = Post(body=request.form.get('editor','1'),
                     author=current_user._get_current_object())
                     #topic = form.topic.data)
         db.session.add(post)
@@ -31,8 +34,10 @@ def index():
         error_out=False)
     posts = pagination.items
     # print(pagination.iter_pages())
-    return render_template('index.html', form=form, posts=posts,
+
+    return render_template('index.html',posts=posts,
                            pagination=pagination)
+
     # show_followed=show_followed, pagination=pagination)
 
 

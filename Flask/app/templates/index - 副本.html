@@ -3,7 +3,11 @@
 {% import "_macros.html" as macros %}
 {% block title %}Share{% endblock %}
 
+{% block head %}
+{{ super() }}
+<script src="https://cdn.ckeditor.com/ckeditor5/11.0.1/inline/ckeditor.js"></script>
 
+{% endblock %}
 
 {% block page_content %}
 
@@ -15,38 +19,17 @@
 
 
         {% if current_user.can(Permission.WRITE) %}
-
-
-<form class="form" method="POST" action="{{ url_for('main.index') }}">
-    
-    <div id ="editor"></div> 
-    
-    <input type="submit" value="submit">
-</form>
-
-<script src="https://cdn.ckeditor.com/ckeditor5/11.0.1/inline/ckeditor.js"></script>
-
-<script>
-    var data
+           
+            <script>
     InlineEditor
-        .create( document.querySelector( '#editor' ) )
-        then(editor => {
-            window.editor = editor;
-            data = editor.getData();
-            console.log(data);
-        } )
+        .create( document.querySelector( '#body' ) )
         .catch( error => {
             console.error( error );
         } );
-        
-
-    
 </script>
 
+        {% endif %}
  
-{% endif %}
- 
-
     
     {% include '_topic.html' %}
     
@@ -60,5 +43,4 @@
 {% block scripts %}
     {{ super() }}
     {{ pagedown.include_pagedown() }}
-   
 {% endblock %}

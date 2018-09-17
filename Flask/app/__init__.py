@@ -7,7 +7,7 @@ from config import config
 import os
 from flask_mail import Mail
 from flask_pagedown import PageDown
-
+#from flask_ckeditor import CKEditor
 
 app = Flask(__name__)
 
@@ -15,7 +15,7 @@ bootstrap = Bootstrap()
 db = SQLAlchemy()
 mail = Mail()
 pagedown = PageDown()
-
+#ckeditor = CKEditor(app)
 
 '''
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -53,5 +53,6 @@ def create_app(config_name):
     moment.init_app(app)
     mail.init_app(app)
     pagedown.init_app(app)
+  #  ckeditor.init_app(app)
     # app.debug = True
     return app
