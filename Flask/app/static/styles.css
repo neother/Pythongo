@@ -194,7 +194,7 @@ margin-right:20px;
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto;
-  box-shadow: black 0px 0px 12px;
+  box-shadow: black 0px 0px 5px;
 }
 @media (min-width: 768px) {
   .container {
@@ -208,6 +208,6 @@ margin-right:20px;
 }
 @media (min-width: 1200px) {
   .container {
-    width: 900px;
+    width: 950px;
   }
 }
