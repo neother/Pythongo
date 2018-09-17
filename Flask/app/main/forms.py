@@ -52,7 +52,7 @@ class EditProfileAdminForm(FlaskForm):
 
 class PostForm(FlaskForm):
 
-    topic = StringField('Topic', validators=[Length(0, 128)])
+    #topic = StringField('Topic', validators=[Length(0, 128)])
     body = PageDownField("Anything want to share?",
                          validators=[DataRequired()])
     submit = SubmitField('Submit')

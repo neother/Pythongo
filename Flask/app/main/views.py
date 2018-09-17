@@ -20,8 +20,8 @@ def index():
     form = PostForm()
     if current_user.can(Permission.WRITE) and form.validate_on_submit():
         post = Post(body=form.body.data,
-                    author=current_user._get_current_object(),
-                    topic = form.topic.data)
+                    author=current_user._get_current_object())
+                    #topic = form.topic.data)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('.index'))
@@ -125,11 +125,12 @@ def edit(id):
     form = PostForm()
     if form.validate_on_submit():
         post.body = form.body.data
+#        post.topic = form.topic.data
         db.session.add(post)
         flash('The post has been updated.')
         return redirect(url_for('.post', id=post.id))
     form.body.data = post.body
-    form.topic.data =post.topic
+    #form.topic.data =post.topic
     return render_template('edit_post.html', form=form)
 
 
