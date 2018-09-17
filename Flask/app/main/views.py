@@ -22,7 +22,7 @@ def index():
     #if current_user.can(Permission.WRITE) and form.validate_on_submit():
     if current_user.can(Permission.WRITE) and request.method == 'POST':
 
-        post = Post(body=request.form.get('editor','1'),
+        post = Post(body=request.form.get('editor','666'),
                     author=current_user._get_current_object())
                     #topic = form.topic.data)
         db.session.add(post)

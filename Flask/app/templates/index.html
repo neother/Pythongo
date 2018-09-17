@@ -17,9 +17,12 @@
         {% if current_user.can(Permission.WRITE) %}
 
 
-<form class="form" method="POST" action="{{ url_for('main.index') }}">
+<form class="form2" method="POST" action="{{ url_for('main.index') }}">
     
-    <div id ="editor"></div> 
+    <div id ="editor">
+
+        <input type="text"  name = "editor" value="type">
+    </div> 
     
     <input type="submit" value="submit">
 </form>
@@ -27,19 +30,21 @@
 <script src="https://cdn.ckeditor.com/ckeditor5/11.0.1/inline/ckeditor.js"></script>
 
 <script>
-    var data
+    let editor;
     InlineEditor
         .create( document.querySelector( '#editor' ) )
-        then(editor => {
-            window.editor = editor;
-            data = editor.getData();
-            console.log(data);
-        } )
-        .catch( error => {
-            console.error( error );
-        } );
+    .then( newEditor => {
+        editor = newEditor;
+    } )
+    .catch( error => {
+        console.error( error );
+    } );
         
+document.querySelector( '#submit' ).addEventListener( 'click', () => {
+    const editorData = editor.getData();
 
+    // ...
+} );
     
 </script>
 
