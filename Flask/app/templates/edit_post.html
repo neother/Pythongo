@@ -10,7 +10,32 @@
   </div>
     <div>
         {% if current_user.can(Permission.WRITE) %}
-            {{ wtf.quick_form(form) }}
+            <form class="form" method="POST" action="{{ url_for('main.edit',id=post.id) }}">
+    
+    <textarea id ="editor" name = "content" value="Type...">
+       {{post.body}}
+
+    </textarea>
+    <br>
+    <input type="submit" value="Submit">
+
+</form>
+
+<script src="https://cdn.ckeditor.com/ckeditor5/11.0.1/classic/ckeditor.js"></script>
+
+<script>
+            ClassicEditor
+                .create( document.querySelector( '#editor' ),{
+        
+        toolbar: [ '']
+    } )
+                .then( editor => {
+                    console.log( editor );
+                } )
+                .catch( error => {
+                    console.error( error );
+                } );
+        </script>
         {% endif %}
     </div>
     

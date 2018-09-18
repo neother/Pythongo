@@ -14,7 +14,6 @@
                         {{ post.author.username }}
                     </a>
                 </div>
-       
                 <div class="topicinpost-body ">
                 
                       {% if post.body_html %}
@@ -24,11 +23,9 @@
                     {% endif %}
                
                 </div>
-
-
-                <div class="post-footer">
+                    <div class="post-footer">
                      
-        {% if current_user == post.author %}
+                        {% if current_user == post.author %}
                                 <a href="{{ url_for('.edit', id=post.id) }}">
                                     <span class="label label-warning">Edit</span></a>
                                 {% endif %}
@@ -58,7 +55,7 @@
 
 
                             </div>
-
+</div>
       
                         </li>
                     {% endfor %}

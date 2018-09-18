@@ -15,38 +15,33 @@
 
 
         {% if current_user.can(Permission.WRITE) %}
+<br>
 
-
-<form class="form2" method="POST" action="{{ url_for('main.index') }}">
+<form class="form" method="POST" action="{{ url_for('main.index') }}">
     
-    <div id ="editor">
+    <textarea id ="editor" name = "content" value="Type...">
+        
+    </textarea>
+    <br>
+    <input type="submit" value="Submit">
 
-        <input type="text"  name = "editor" value="type">
-    </div> 
-    
-    <input type="submit" value="submit">
 </form>
 
-<script src="https://cdn.ckeditor.com/ckeditor5/11.0.1/inline/ckeditor.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/11.0.1/classic/ckeditor.js"></script>
 
 <script>
-    let editor;
-    InlineEditor
-        .create( document.querySelector( '#editor' ) )
-    .then( newEditor => {
-        editor = newEditor;
-    } )
-    .catch( error => {
-        console.error( error );
-    } );
+            ClassicEditor
+                .create( document.querySelector( '#editor' ),{
         
-document.querySelector( '#submit' ).addEventListener( 'click', () => {
-    const editorData = editor.getData();
-
-    // ...
-} );
-    
-</script>
+        toolbar: [ '']
+    } )
+                .then( editor => {
+                    console.log( editor );
+                } )
+                .catch( error => {
+                    console.error( error );
+                } );
+        </script>
 
  
 {% endif %}

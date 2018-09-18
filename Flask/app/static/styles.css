@@ -201,13 +201,13 @@ margin-right:20px;
     width: 750px;
   }
 }
-@media (min-width: 992px) {
+@media (min-width: 848px) {
   .container {
-    width: 970px;
+    width: 770px;
   }
 }
 @media (min-width: 1200px) {
   .container {
-    width: 950px;
+    width: 850px;
   }
 }

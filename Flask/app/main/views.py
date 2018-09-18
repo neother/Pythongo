@@ -22,7 +22,7 @@ def index():
     #if current_user.can(Permission.WRITE) and form.validate_on_submit():
     if current_user.can(Permission.WRITE) and request.method == 'POST':
 
-        post = Post(body=request.form.get('editor','666'),
+        post = Post(body=request.form.get('content','666'),
                     author=current_user._get_current_object())
                     #topic = form.topic.data)
         db.session.add(post)
@@ -127,16 +127,15 @@ def edit(id):
     if current_user != post.author and not current_user.can(Permission.ADMIN):
 
         abort(403)
-    form = PostForm()
-    if form.validate_on_submit():
-        post.body = form.body.data
-#        post.topic = form.topic.data
+    #form = PostForm()
+    if request.method == 'POST':
+
+        post.body = request.form.get('content','666')
         db.session.add(post)
         flash('The post has been updated.')
         return redirect(url_for('.post', id=post.id))
-    form.body.data = post.body
-    #form.topic.data =post.topic
-    return render_template('edit_post.html', form=form)
+
+    return render_template('edit_post.html', post =post)
 
 
 @main.route('/delete_post/<int:id>')
