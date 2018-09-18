@@ -135,7 +135,7 @@ def edit(id):
         flash('The post has been updated.')
         return redirect(url_for('.post', id=post.id))
 
-    return render_template('edit_post.html', post =post)
+    return render_template('edit_post.html', post=post)
 
 
 @main.route('/delete_post/<int:id>')
