@@ -21,12 +21,15 @@ def index():
     #form = PostForm()
     #if current_user.can(Permission.WRITE) and form.validate_on_submit():
     if current_user.can(Permission.WRITE) and request.method == 'POST':
+        if request.form.get('content') == '<p>&nbsp;</p>':
+            flash('Please type your thought')
+        else:
 
-        post = Post(body=request.form.get('content','666'),
-                    author=current_user._get_current_object())
-                    #topic = form.topic.data)
-        db.session.add(post)
-        db.session.commit()
+            post = Post(body=request.form.get('content','666'),
+                        author=current_user._get_current_object())
+                        #topic = form.topic.data)
+            db.session.add(post)
+            db.session.commit()
         return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
     pagination = Post.query.order_by(Post.Top.desc(), Post.timestamp.desc()).paginate(
@@ -129,10 +132,13 @@ def edit(id):
         abort(403)
     #form = PostForm()
     if request.method == 'POST':
+        if request.form.get('content') == '<p>&nbsp;</p>':
+            flash('Please type your thought')
+        else:
 
-        post.body = request.form.get('content','666')
-        db.session.add(post)
-        flash('The post has been updated.')
+            post.body = request.form.get('content','666')
+            db.session.add(post)
+            flash('The post has been updated.')
         return redirect(url_for('.post', id=post.id))
 
     return render_template('edit_post.html', post=post)
