@@ -212,19 +212,20 @@ def followadmin():
     flash('all the user followers 40131616@qq.com')
     return redirect(url_for('main.index'))
 
+
 @auth.route('/fakepost')
 def fakepost():
     Post.generate_fake(77)
-   
 
     flash('77 posts have been faked by 40131616@qq.com')
     return redirect(url_for('main.index'))
 
+
+'''
 @auth.route('/showaboutme')
 def showaboutme():
-    allusers = User.query.all()
-    for user in allusers:
-        user.showaboutme = True
+    user = User.query.filter_by(email="401316161@qq.com").first()
+    user.showaboutme = True
     db.session.commit()
     flash('showaboutme is activated')
     return redirect(url_for('main.index'))
@@ -232,14 +233,13 @@ def showaboutme():
 
 @auth.route('/notshowaboutme')
 def notshowaboutme():
-    allusers = User.query.all()
-    for user in allusers:
-        user.showaboutme = False
+    user = User.query.filter_by(email="401316161@qq.com").first()
+    user.showaboutme = False
     db.session.commit()
     flash('showaboutme is de-activated')
     return redirect(url_for('main.index'))
 
-
+'''
 
 '''no need this route, email is not changeable
 @auth.route('/change_email_request')

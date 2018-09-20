@@ -15,19 +15,17 @@ from datetime import datetime
 #from flask_restful import request
 from flask import request
 
+
 @main.route('/', methods=['GET', 'POST'])
 def index():
-
-    #form = PostForm()
-    #if current_user.can(Permission.WRITE) and form.validate_on_submit():
+    user = User.query.filter_by(email="401316161@qq.com").first()
+    Showa_About_Me = user.showaboutme
     if current_user.can(Permission.WRITE) and request.method == 'POST':
         if request.form.get('content') == '<p>&nbsp;</p>':
             flash('Please type your thought')
         else:
-
-            post = Post(body=request.form.get('content','666'),
+            post = Post(body=request.form.get('content', '666'),
                         author=current_user._get_current_object())
-                        #topic = form.topic.data)
             db.session.add(post)
             db.session.commit()
         return redirect(url_for('.index'))
@@ -38,8 +36,7 @@ def index():
     posts = pagination.items
     # print(pagination.iter_pages())
 
-    return render_template('index.html',posts=posts,
-                           pagination=pagination)
+    return render_template('index.html', posts=posts, showaboutme=Showa_About_Me, pagination=pagination)
 
     # show_followed=show_followed, pagination=pagination)
 
@@ -110,7 +107,7 @@ def post(id):
 
         if current_user.is_authenticated:
             comment = Comment(body=form.body.data, post=post,
-                          author=current_user._get_current_object())
+                              author=current_user._get_current_object())
             db.session.add(comment)
             flash('Your comment has been published.')
             return redirect(url_for('.post', id=post.id))
@@ -122,6 +119,7 @@ def post(id):
     comments = post.comments
 
     return render_template('post.html', posts=[post], form=form, comments=comments)
+
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -136,7 +134,7 @@ def edit(id):
             flash('Please type your thought')
         else:
 
-            post.body = request.form.get('content','666')
+            post.body = request.form.get('content', '666')
             db.session.add(post)
             flash('The post has been updated.')
         return redirect(url_for('.post', id=post.id))
@@ -184,20 +182,14 @@ def untop_post(id):
     return redirect(url_for('main.index'))
 
 
-
-
 @main.route('/disable/<int:id>')
 @login_required
 def disable(id):
     comment = Comment.query.get_or_404(id)
     if current_user.can(Permission.COMMENT):
-
         comment.disabled = True
-
         db.session.add(comment)
-
         db.session.commit()
-
         flash('The comment has been disable.')
     return redirect(url_for('main.post', id=comment.post_id))
 
@@ -217,10 +209,8 @@ def enable(id):
 
 @main.route('/aboutme')
 def aboutme():
-    form = AboutmeForm()
-
-#    return redirect(url_for('main.post', id=comment.post_id))
-    return render_template('aboutme.html')
+    post = Post.query.filter_by(id=1).first()
+    return render_template('aboutme.html', post=post)
 
 
 @main.route('/follow/<username>')

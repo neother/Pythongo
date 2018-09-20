@@ -24,9 +24,9 @@
                     {% if current_user.is_authenticated %}
                         <li><a href="{{ url_for('main.user', username=current_user.username) }}">Profile</a></li>
                     {% endif %}
-                    {% if current_user.showaboutme %}
+                   
                     <li><a href="{{ url_for('main.aboutme') }}">About me</a></li>
-                    {% endif %}
+                
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
@@ -48,13 +48,6 @@
                                     <li><a href="{{ url_for('auth.removeallcomment') }}">removeallcomment</a></li>
                                     <li><a href="{{ url_for('auth.followadmin') }}">followadmin</a></li>
                                     <li><a href="{{ url_for('auth.fakepost') }}">fakepost</a></li>
-                                    {% if current_user.showaboutme %}
-                                    <li><a href="{{ url_for('auth.notshowaboutme') }}">notshowaboutme</a></li>
-                                    {% else %}
-                                    <li><a href="{{ url_for('auth.showaboutme') }}">showaboutme</a></li>
-                                    {% endif %}
-
-
                                 {% endif %}
                                 <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
                             </ul>

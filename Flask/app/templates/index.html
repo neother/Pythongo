@@ -9,22 +9,17 @@
 
         <h3>Hello {% if current_user.is_authenticated %}
                             {{ current_user.username }}!
-                        {% else %}
+                    {% else %}
                             Friend! Please login to share your thought.
                         {% endif %}</h3>
-
-
-        {% if current_user.can(Permission.WRITE) %}
 <br>
 
+{% if current_user.can(Permission.WRITE) %}
 <form class="form" method="POST" action="{{ url_for('main.index') }}">
-    
     <textarea id ="editor" name = "content" value="Type..."></textarea>
     <br>
     <input class="btn btn-default" type="submit" value="Submit">
-
 </form>
-
 <script src="https://cdn.ckeditor.com/ckeditor5/11.0.1/classic/ckeditor.js"></script>
 
 <script>
@@ -41,7 +36,6 @@
                 } );
         </script>
 
- 
 {% endif %}
  
 
