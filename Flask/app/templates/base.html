@@ -41,11 +41,6 @@
                                 <li><a href="{{ url_for('auth.password_change') }}">Change Password</a></li>
                                
                                 {% if current_user.is_administrator() %}
-
-                                    <li><a href="{{ url_for('auth.deleteself') }}">deleteself</a></li>
-                                    <li><a href="{{ url_for('auth.removealluser') }}">removealluser</a></li>
-                                    <li><a href="{{ url_for('auth.removeallpost') }}">removeallpost</a></li>
-                                    <li><a href="{{ url_for('auth.removeallcomment') }}">removeallcomment</a></li>
                                     <li><a href="{{ url_for('auth.followadmin') }}">followadmin</a></li>
                                     <li><a href="{{ url_for('auth.fakepost') }}">fakepost</a></li>
                                 {% endif %}
