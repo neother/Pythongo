@@ -5,14 +5,11 @@
 
 {% block page_content %}
 <br>
-    <h4>A Light, Simple and Grace place to share your thought:)</h4>
-<br>
         <h4>Hello {% if current_user.is_authenticated %}
                             {{ current_user.username }}! Welcome back!
                     {% else %}
                             Friend! Please login to share your thought.
                         {% endif %}</h4>
-<br>
 
 {% if current_user.can(Permission.WRITE) %}
 <form class="form" method="POST" action="{{ url_for('main.index') }}">

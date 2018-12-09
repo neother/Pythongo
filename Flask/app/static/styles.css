@@ -109,11 +109,11 @@ div.flask-pagedown-preview h3 {
 .post-body {
     margin-top: 3px;
     text-align: left;
-    height:5.9em;
+    height:4.3em;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 }
 
