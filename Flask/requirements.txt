@@ -2,7 +2,7 @@ alembic==1.0.0
 aniso8601==3.0.2
 argh==0.26.2
 beautifulsoup4==4.6.3
-bleach==2.1.4
+bleach==3.3.0
 blinker==1.4
 bs4==0.0.1
 click==6.7
